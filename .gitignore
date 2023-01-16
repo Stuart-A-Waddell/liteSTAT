@@ -1,8 +1,11 @@
+# C/C++ #####################
 # Prerequisites
 *.d
 
 # Object files
 *.o
+*.slo
+*.lo
 *.ko
 *.obj
 *.elf
@@ -42,6 +45,12 @@
 *.idb
 *.pdb
 
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
 # Kernel Module Compile Results
 *.mod*
 *.cmd
@@ -50,3 +59,42 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Processing ###################
+.DS_Store
+applet
+application.linux-arm64
+application.linux-armv6hf
+application.linux32
+application.linux64
+application.windows32
+application.windows64
+application.macosx
+out
+
+# KiCad #####################################
+# For PCBs designed using KiCad: https://www.kicad.org/
+# Format documentation: https://kicad.org/help/file-formats/
+
+# Temporary files
+*.000
+*.bak
+*.bck
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*-backups
+*.kicad_prl
+*.sch-bak
+*~
+_autosave-*
+*.tmp
+*-save.pro
+*-save.kicad_pcb
+fp-info-cache
+
+# Netlist files (exported from Eeschema)
+*.net
+
+# Autorouter files (exported from Pcbnew)
+*.dsn
+*.ses
