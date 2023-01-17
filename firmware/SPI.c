@@ -1,0 +1,92 @@
+/* Project: POTENTIOSTAT FIRMWARE
+ * File: SPI.c
+ * Created: 04/01/2018
+ * Author: Stuart Waddell
+ * Robert Gordon University
+ * School of Pharmacy and Life Sciences
+ */  
+#include "main.h"
+
+void SPI_INITIALISE (void)
+{
+	// Set MOSI, SCK, SS's as Output
+	DDRB |= (1<<POT_SS)|(1<<ADC_SS)|(1<<DAC_SS)|(1<<MOSI)|(1<<SPI_CLK);
+	DDRB &= ~(1<<MISO);
+	// Set SS's high (deselected)
+	POT_DESELECT;
+	ADC_DESELECT;
+	DAC_DESELECT;
+	// Enable SPI, Set as Master
+	//Prescaler: Fosc/16, Enable Interrupts
+	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+	
+}
+
+unsigned char SPI_CHAR (unsigned char CONFIG_SETTING)
+{
+	SPDR = CONFIG_SETTING;
+	SPI_WAIT;
+	return(SPDR);
+}
+
+void SET_DAC (void)
+{
+	DAC_HI = (DAC_LEVEL >> 8);
+	DAC_LO = ((DAC_LEVEL<< 8) >> 8);
+	DAC_SELECT;
+	SPI_CHAR (DAC_HI);
+	SPI_CHAR (DAC_LO);
+	DAC_DESELECT;
+}
+
+int READ_VOLTAGE (void)
+{
+	ADC_SELECT;
+	SPI_CHAR (ADC_VOLTAGE_CONFIG1);
+	ADC_HI = SPI_CHAR (ADC_VOLTAGE_CONFIG2);
+	ADC_LO = SPI_CHAR (ADC_VOLTAGE_CONFIG3);
+	ADC_DESELECT;
+	ADC_READING = ADC_HI << 8;
+	ADC_READING += ADC_LO;
+	ADC_READING = ADC_READING << 3;
+	ADC_READING = ADC_READING / 8;
+	return (ADC_READING);
+}
+
+int READ_CURRENT (void)
+{
+	ADC_SELECT;
+	SPI_CHAR (ADC_CURRENT_CONFIG1);
+	ADC_HI = SPI_CHAR (ADC_CURRENT_CONFIG2);
+	ADC_LO = SPI_CHAR (ADC_CURRENT_CONFIG3);
+	ADC_DESELECT;                 
+	ADC_READING = ADC_HI << 8;
+	ADC_READING += ADC_LO;
+	ADC_READING = ADC_READING << 3;
+	ADC_READING = ADC_READING / 8;;
+	return (ADC_READING);
+}
+
+int READ_PULSE_CURRENT (void)
+{
+	ADC_SELECT;
+	SPI_CHAR (ADC_CURRENT_CONFIG4);
+	ADC_HI = SPI_CHAR (ADC_CURRENT_CONFIG5);
+	ADC_LO = SPI_CHAR (ADC_CURRENT_CONFIG6);
+	ADC_DESELECT;
+	ADC_READING = ADC_HI << 8;
+	ADC_READING += ADC_LO;
+	ADC_READING = ADC_READING << 3;
+	ADC_READING = ADC_READING / 8;
+	return (ADC_READING);
+}
+
+void SET_POT (void)
+{
+	PWR_LED_OFF;
+	POT_SELECT;
+	SPI_CHAR(0);
+	SPI_CHAR(POT_LEVEL);
+	POT_DESELECT;
+}
+
